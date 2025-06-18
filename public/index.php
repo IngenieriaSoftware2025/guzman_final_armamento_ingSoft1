@@ -13,14 +13,12 @@ $router->get('/', [AppController::class,'index']);
 
 // GET para mostrar la página
 $router->get('/usuarios', [UsuariosController::class, 'renderizarPagina']);
-
-// APIs para CRUD
-$router->post('/api/usuarios/buscar', [UsuariosController::class, 'buscarAPI']);
-$router->post('/api/usuarios/guardar', [UsuariosController::class, 'guardarAPI']);
-$router->post('/api/usuarios/modificar', [UsuariosController::class, 'modificarAPI']);
-$router->get('/api/usuarios/eliminar', [UsuariosController::class, 'eliminarAPI']);
-$router->get('/api/usuarios/roles', [UsuariosController::class, 'obtenerRolesAPI']);
-$router->get('/api/usuarios/obtener', [UsuariosController::class, 'obtenerUsuarioAPI']);
+$router->get('/usuarios/buscarAPI', [UsuariosController::class, 'buscarAPI']);
+$router->post('/usuarios/guardarAPI', [UsuariosController::class, 'guardarAPI']);
+$router->post('/usuarios/modificarAPI', [UsuariosController::class, 'modificarAPI']);
+$router->get('/usuarios/eliminarAPI', [UsuariosController::class, 'eliminarAPI']);
+$router->get('/usuarios/obtenerRolesAPI', [UsuariosController::class, 'obtenerRolesAPI']);
+$router->get('/usuarios/obtenerUsuarioAPI', [UsuariosController::class, 'obtenerUsuarioAPI']);
 
 // Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador
 $router->comprobarRutas();
