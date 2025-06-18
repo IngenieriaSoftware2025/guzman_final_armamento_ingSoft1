@@ -39,7 +39,7 @@ class Usuario extends ActiveRecord
         $this->usuario_correo = $args['usuario_correo'] ?? '';
         $this->usuario_contra = $args['usuario_contra'] ?? '';
         $this->usuario_fecha_creacion = $args['usuario_fecha_creacion'] ?? date('Y-m-d');
-        $this->usuario_fotografia = $args['usuario_fotografia'] ?? '';
+        $this->usuario_fotografia = $args['usuario_fotografia'] ?? null;
         $this->usuario_situacion = $args['usuario_situacion'] ?? 1;
     }
 }

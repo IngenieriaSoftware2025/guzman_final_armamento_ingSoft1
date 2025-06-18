@@ -25,7 +25,7 @@
                         <div class="card-body text-center">
                             <h5 class="card-title">Gestión de Usuarios</h5>
                             <p class="card-text">Administrar usuarios del sistema</p>
-                            <a href="/guzman_final_armamento_ingSof1t1/usuarios" class="btn btn-primary">Acceder</a>
+                            <a href="/guzman_final_armamento_ingSof1/usuarios" class="btn btn-primary">Acceder</a>
                         </div>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
                         <div class="card-body text-center">
                             <h5 class="card-title">Control de Aplicaciones</h5>
                             <p class="card-text">Gestionar aplicaciones registradas</p>
-                            <a href="/guzman_final_armamento_ingSof1t/aplicacion" class="btn btn-primary">Acceder</a>
+                            <a href="/guzman_final_armamento_ingSof1/aplicacion" class="btn btn-primary">Acceder</a>
                         </div>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                         <div class="card-body text-center">
                             <h5 class="card-title">Sistema de Permisos</h5>
                             <p class="card-text">Crear y administrar permisos</p>
-                            <a href="/guzman_final_armamento_ingSof11/permisos" class="btn btn-primary">Acceder</a>
+                            <a href="/guzman_final_armamento_ingSof1/permisos" class="btn btn-primary">Acceder</a>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                         <div class="card-body text-center">
                             <h5 class="card-title">Asignación de Permisos</h5>
                             <p class="card-text">Asignar permisos a usuarios</p>
-                            <a href="/guzman_final_armamento_ingSof11/asignacionpermisos" class="btn btn-primary">Acceder</a>
+                            <a href="/guzman_final_armamento_ingSof1/asignacionpermisos" class="btn btn-primary">Acceder</a>
                         </div>
                     </div>
                 </div>
