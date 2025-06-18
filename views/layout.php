@@ -26,6 +26,10 @@
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/ejemplo/"><i class="bi bi-house-fill me-2"></i>Inicio</a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="../guzman_final_armamento_ingSoft1/usuarios/"><i class="bi bi-house-fill me-2"></i>Usuarios</a>
+                    </li>
   
                     <div class="nav-item dropdown " >
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
