@@ -3,31 +3,45 @@
 namespace Controllers;
 
 use Model\Usuario;
+use Model\ActiveRecord;
 use MVC\Router;
+use Exception;
 
 class UsuarioController
 {
     public static function index(Router $router)
     {
-        $usuarios = Usuario::all();
+        session_start();
+        
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /guzman_final_armamento_ingSoft1/');
+            exit;
+        }
+
+        $usuarios = static::obtenerUsuariosActivos();
         
         $router->render('usuarios/index', [
             'usuarios' => $usuarios
-        ]);
+        ], 'layouts/layout');
     }
 
     public static function crear(Router $router)
     {
+        session_start();
+        
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /guzman_final_armamento_ingSoft1/');
+            exit;
+        }
+
         $usuario = new Usuario();
         $errores = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $usuario->sincronizar($_POST);
             
-            // Validaciones
             $errores = static::validarUsuario($usuario);
             
-            // Validar que no exista el correo
             if (empty($errores)) {
                 $usuarioExistente = static::buscarPorCorreo($usuario->usuario_correo);
                 if ($usuarioExistente) {
@@ -35,7 +49,6 @@ class UsuarioController
                 }
             }
 
-            // Validar que no exista el DPI
             if (empty($errores)) {
                 $dpiExistente = static::buscarPorDPI($usuario->usuario_dpi);
                 if ($dpiExistente) {
@@ -43,7 +56,6 @@ class UsuarioController
                 }
             }
 
-            // Procesar fotografía si se subió
             if (empty($errores) && !empty($_FILES['usuario_fotografia']['name'])) {
                 $resultado = static::procesarFotografia($_FILES['usuario_fotografia']);
                 if ($resultado['error']) {
@@ -53,16 +65,16 @@ class UsuarioController
                 }
             }
 
-            // Hashear contraseña
             if (empty($errores)) {
                 $usuario->usuario_contra = password_hash($usuario->usuario_contra, PASSWORD_BCRYPT);
+                $usuario->usuario_fecha_creacion = date('Y-m-d');
             }
 
-            // Guardar en base de datos
             if (empty($errores)) {
                 $resultado = $usuario->guardar();
                 if ($resultado) {
-                    header('Location: /usuarios');
+                    header('Location: /guzman_final_armamento_ingSoft1/usuarios');
+                    exit;
                 }
             }
         }
@@ -70,26 +82,33 @@ class UsuarioController
         $router->render('usuarios/crear', [
             'usuario' => $usuario,
             'errores' => $errores
-        ]);
+        ], 'layouts/layout');
     }
 
     public static function actualizar(Router $router)
     {
-        $id = validarORedireccionar('/usuarios');
+        session_start();
+        
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /guzman_final_armamento_ingSoft1/');
+            exit;
+        }
+
+        $id = validarORedireccionar('/guzman_final_armamento_ingSoft1/usuarios');
         $usuario = Usuario::find($id);
         $errores = [];
 
         if (!$usuario) {
-            header('Location: /usuarios');
+            header('Location: /guzman_final_armamento_ingSoft1/usuarios');
+            exit;
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $passwordAnterior = $usuario->usuario_contra;
             $usuario->sincronizar($_POST);
             
-            // Validaciones
-            $errores = static::validarUsuario($usuario);
+            $errores = static::validarUsuarioEdicion($usuario);
             
-            // Validar que no exista el correo (excepto el actual)
             if (empty($errores)) {
                 $usuarioExistente = static::buscarPorCorreoExceptoId($usuario->usuario_correo, $usuario->usuario_id);
                 if ($usuarioExistente) {
@@ -97,7 +116,6 @@ class UsuarioController
                 }
             }
 
-            // Validar que no exista el DPI (excepto el actual)
             if (empty($errores)) {
                 $dpiExistente = static::buscarPorDPIExceptoId($usuario->usuario_dpi, $usuario->usuario_id);
                 if ($dpiExistente) {
@@ -105,13 +123,11 @@ class UsuarioController
                 }
             }
 
-            // Procesar fotografía si se subió
             if (empty($errores) && !empty($_FILES['usuario_fotografia']['name'])) {
                 $resultado = static::procesarFotografia($_FILES['usuario_fotografia']);
                 if ($resultado['error']) {
                     $errores[] = $resultado['mensaje'];
                 } else {
-                    // Eliminar fotografía anterior si existe
                     if ($usuario->usuario_fotografia) {
                         static::eliminarFotografia($usuario->usuario_fotografia);
                     }
@@ -119,16 +135,19 @@ class UsuarioController
                 }
             }
 
-            // Hashear contraseña solo si se cambió
-            if (empty($errores) && !empty($_POST['usuario_contra'])) {
-                $usuario->usuario_contra = password_hash($usuario->usuario_contra, PASSWORD_BCRYPT);
+            if (empty($errores)) {
+                if (!empty($_POST['usuario_contra'])) {
+                    $usuario->usuario_contra = password_hash($usuario->usuario_contra, PASSWORD_BCRYPT);
+                } else {
+                    $usuario->usuario_contra = $passwordAnterior;
+                }
             }
 
-            // Guardar en base de datos
             if (empty($errores)) {
                 $resultado = $usuario->guardar();
                 if ($resultado) {
-                    header('Location: /usuarios');
+                    header('Location: /guzman_final_armamento_ingSoft1/usuarios');
+                    exit;
                 }
             }
         }
@@ -136,79 +155,66 @@ class UsuarioController
         $router->render('usuarios/actualizar', [
             'usuario' => $usuario,
             'errores' => $errores
-        ]);
+        ], 'layouts/layout');
     }
 
     public static function eliminar()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = $_POST['id'];
-            $id = filter_var($id, FILTER_VALIDATE_INT);
-
-            if ($id) {
-                $usuario = Usuario::find($id);
-                if ($usuario) {
-                    // Cambiar situación a 0 (eliminación lógica)
-                    $usuario->usuario_situacion = 0;
-                    $resultado = $usuario->guardar();
-                }
-            }
-        }
-        header('Location: /usuarios');
-    }
-
-    public static function login(Router $router)
-    {
-        $errores = [];
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $correo = $_POST['usuario_correo'] ?? '';
-            $password = $_POST['usuario_contra'] ?? '';
-
-            if (empty($correo)) {
-                $errores[] = 'El correo es obligatorio';
-            }
-
-            if (empty($password)) {
-                $errores[] = 'La contraseña es obligatoria';
-            }
-
-            if (empty($errores)) {
-                $usuario = static::buscarPorCorreo($correo);
-                
-                if (!$usuario) {
-                    $errores[] = 'Usuario no encontrado';
-                } else {
-                    if (!password_verify($password, $usuario->usuario_contra)) {
-                        $errores[] = 'Contraseña incorrecta';
-                    } else {
-                        // Iniciar sesión
-                        session_start();
-                        $_SESSION['usuario_id'] = $usuario->usuario_id;
-                        $_SESSION['usuario_nombre'] = $usuario->usuario_nombre;
-                        $_SESSION['usuario_apellido'] = $usuario->usuario_apellido;
-                        $_SESSION['login'] = true;
-
-                        header('Location: /dashboard');
-                    }
-                }
-            }
-        }
-
-        $router->render('auth/login', [
-            'errores' => $errores
-        ]);
-    }
-
-    public static function logout()
-    {
         session_start();
-        $_SESSION = [];
-        session_destroy();
-        header('Location: /');
+        
+        if (!isset($_SESSION['user_id'])) {
+            getHeadersApi();
+            echo json_encode(['codigo' => 0, 'mensaje' => 'Sesión no válida']);
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            getHeadersApi();
+
+            try {
+                $id = $_POST['id'] ?? null;
+                $id = filter_var($id, FILTER_VALIDATE_INT);
+
+                if ($id) {
+                    $usuario = Usuario::find($id);
+                    if ($usuario) {
+                        $usuario->usuario_situacion = 0;
+                        $resultado = $usuario->guardar();
+                        
+                        if ($resultado) {
+                            echo json_encode([
+                                'codigo' => 1,
+                                'mensaje' => 'Usuario eliminado correctamente'
+                            ]);
+                        } else {
+                            echo json_encode([
+                                'codigo' => 0,
+                                'mensaje' => 'Error al eliminar usuario'
+                            ]);
+                        }
+                    } else {
+                        echo json_encode([
+                            'codigo' => 0,
+                            'mensaje' => 'Usuario no encontrado'
+                        ]);
+                    }
+                } else {
+                    echo json_encode([
+                        'codigo' => 0,
+                        'mensaje' => 'ID de usuario inválido'
+                    ]);
+                }
+            } catch (Exception $e) {
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Error al eliminar usuario',
+                    'detalle' => $e->getMessage()
+                ]);
+            }
+        }
     }
 
-    // Métodos privados para validaciones y utilidades
+    // MÉTODOS PRIVADOS DE VALIDACIÓN Y UTILIDADES
 
     private static function validarUsuario($usuario)
     {
@@ -245,32 +251,69 @@ class UsuarioController
         return $errores;
     }
 
+    private static function validarUsuarioEdicion($usuario)
+    {
+        $errores = [];
+
+        if (!$usuario->usuario_nombre) {
+            $errores[] = 'El nombre es obligatorio';
+        }
+
+        if (!$usuario->usuario_apellido) {
+            $errores[] = 'El apellido es obligatorio';
+        }
+
+        if (!$usuario->usuario_dpi) {
+            $errores[] = 'El DPI es obligatorio';
+        }
+
+        if (strlen($usuario->usuario_dpi) !== 13) {
+            $errores[] = 'El DPI debe tener exactamente 13 dígitos';
+        }
+
+        if (!filter_var($usuario->usuario_correo, FILTER_VALIDATE_EMAIL)) {
+            $errores[] = 'El correo electrónico no es válido';
+        }
+
+        if (!empty($usuario->usuario_contra) && strlen($usuario->usuario_contra) < 6) {
+            $errores[] = 'La contraseña debe tener al menos 6 caracteres';
+        }
+
+        return $errores;
+    }
+
+    private static function obtenerUsuariosActivos()
+    {
+        $query = "SELECT * FROM guzman_usuarios WHERE usuario_situacion = 1 ORDER BY usuario_id DESC";
+        return Usuario::consultarSQL($query);
+    }
+
     private static function buscarPorCorreo($correo)
     {
-        $query = "SELECT * FROM guzman_usuarios WHERE usuario_correo = ? AND usuario_situacion = 1";
-        $resultado = Usuario::consultarSQL($query, [$correo]);
-        return $resultado ? array_shift($resultado) : null;
+        $query = "SELECT * FROM guzman_usuarios WHERE usuario_correo = '$correo' AND usuario_situacion = 1";
+        $resultado = Usuario::consultarSQL($query);
+        return !empty($resultado) ? array_shift($resultado) : null;
     }
 
     private static function buscarPorDPI($dpi)
     {
-        $query = "SELECT * FROM guzman_usuarios WHERE usuario_dpi = ? AND usuario_situacion = 1";
-        $resultado = Usuario::consultarSQL($query, [$dpi]);
-        return $resultado ? array_shift($resultado) : null;
+        $query = "SELECT * FROM guzman_usuarios WHERE usuario_dpi = '$dpi' AND usuario_situacion = 1";
+        $resultado = Usuario::consultarSQL($query);
+        return !empty($resultado) ? array_shift($resultado) : null;
     }
 
     private static function buscarPorCorreoExceptoId($correo, $id)
     {
-        $query = "SELECT * FROM guzman_usuarios WHERE usuario_correo = ? AND usuario_id != ? AND usuario_situacion = 1";
-        $resultado = Usuario::consultarSQL($query, [$correo, $id]);
-        return $resultado ? array_shift($resultado) : null;
+        $query = "SELECT * FROM guzman_usuarios WHERE usuario_correo = '$correo' AND usuario_id != $id AND usuario_situacion = 1";
+        $resultado = Usuario::consultarSQL($query);
+        return !empty($resultado) ? array_shift($resultado) : null;
     }
 
     private static function buscarPorDPIExceptoId($dpi, $id)
     {
-        $query = "SELECT * FROM guzman_usuarios WHERE usuario_dpi = ? AND usuario_id != ? AND usuario_situacion = 1";
-        $resultado = Usuario::consultarSQL($query, [$dpi, $id]);
-        return $resultado ? array_shift($resultado) : null;
+        $query = "SELECT * FROM guzman_usuarios WHERE usuario_dpi = '$dpi' AND usuario_id != $id AND usuario_situacion = 1";
+        $resultado = Usuario::consultarSQL($query);
+        return !empty($resultado) ? array_shift($resultado) : null;
     }
 
     private static function procesarFotografia($archivo)
@@ -284,7 +327,7 @@ class UsuarioController
             ];
         }
 
-        $tamanoMaximo = 5 * 1024 * 1024; // 5MB
+        $tamanoMaximo = 5 * 1024 * 1024;
         if ($archivo['size'] > $tamanoMaximo) {
             return [
                 'error' => true,
@@ -296,7 +339,6 @@ class UsuarioController
         $nombreArchivo = md5(uniqid(rand(), true)) . '.' . $extension;
         $rutaDestino = $_SERVER['DOCUMENT_ROOT'] . '/imagenes/usuarios/' . $nombreArchivo;
 
-        // Crear directorio si no existe
         if (!file_exists(dirname($rutaDestino))) {
             mkdir(dirname($rutaDestino), 0755, true);
         }
