@@ -7,7 +7,7 @@ use Model\ActiveRecord;
 use Model\Usuario;
 use MVC\Router;
 
-class AppController
+class AppController extends ActiveRecord
 {
     public static function index(Router $router)
     {
@@ -35,12 +35,12 @@ class AppController
                 if (password_verify($password, $passDB)) {
                     session_start();
 
-                    $_SESSION['user_id'] = $usuario['usuario_id'];
-                    $_SESSION['user_nombre'] = $usuario['usuario_nombre'];
-                    $_SESSION['user_apellido'] = $usuario['usuario_apellido'];
-                    $_SESSION['user_dpi'] = $usuario['usuario_dpi'];
+                    $_SESSION['usuario_id'] = $usuario['usuario_id'];
+                    $_SESSION['usuario_nombre'] = $usuario['usuario_nombre'];
+                    $_SESSION['usuario_apellido'] = $usuario['usuario_apellido'];
+                    $_SESSION['usuario_dpi'] = $usuario['usuario_dpi'];
 
-                    // Obtener roles del usuario
+
                     $sqlRoles = "SELECT r.rol_id, r.rol_nombre, r.rol_descripcion 
                             FROM guzman_roles r 
                             INNER JOIN guzman_permisos_roles pr ON r.rol_id = pr.permiso_rol 
@@ -49,8 +49,8 @@ class AppController
 
                     $roles = ActiveRecord::fetchArray($sqlRoles);
 
-                    $_SESSION['user_roles'] = $roles;
-                    $_SESSION['user_rol_principal'] = !empty($roles) ? $roles[0]['rol_nombre'] : 'USUARIO';
+                    $_SESSION['usuario_roles'] = $roles;
+                    $_SESSION['usuario_rol_principal'] = !empty($roles) ? $roles[0]['rol_nombre'] : 'USUARIO';
 
                     echo json_encode([
                         'codigo' => 1,
@@ -58,7 +58,7 @@ class AppController
                         'usuario' => [
                             'nombre' => $usuario['usuario_nombre'],
                             'apellido' => $usuario['usuario_apellido'],
-                            'rol' => $_SESSION['user_rol_principal']
+                            'rol' => $_SESSION['usuario_rol_principal']
                         ]
                     ]);
                 } else {
@@ -86,13 +86,12 @@ class AppController
     {
         session_start();
 
-        // Verificar si el usuario está logueado
-        if (!isset($_SESSION['user_id'])) {
+        if (!isset($_SESSION['usuario_id'])) {
             header('Location: /guzman_final_armamento_ingSoft1/');
             exit;
         }
 
-        $router->render('pages/index', [], 'layouts/menu');
+        $router->render('pages/index', [], 'layouts/layout');
     }
 
     public static function logout()

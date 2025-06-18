@@ -3,7 +3,7 @@ require_once __DIR__ . '/../includes/app.php';
 
 use MVC\Router;
 use Controllers\AppController;
-use Controllers\UsuarioController;
+use Controllers\UsuariosController;
 
 $router = new Router();
 $router->setBaseURL('/guzman_final_armamento_ingSoft1');
@@ -14,13 +14,12 @@ $router->post('/API/login', [AppController::class, 'login']);
 $router->get('/inicio', [AppController::class, 'renderInicio']);
 $router->post('/logout', [AppController::class, 'logout']);
 
-// RUTAS DE USUARIOS
-$router->get('/usuarios', [UsuarioController::class, 'index']);
-$router->get('/usuarios/crear', [UsuarioController::class, 'crear']);
-$router->post('/usuarios/crear', [UsuarioController::class, 'crear']);
-$router->get('/usuarios/actualizar', [UsuarioController::class, 'actualizar']);
-$router->post('/usuarios/actualizar', [UsuarioController::class, 'actualizar']);
-$router->post('/usuarios/eliminar', [UsuarioController::class, 'eliminar']);
+// Rutas para Usuarios
+$router->get('/usuarios', [UsuariosController::class, 'renderizarPagina']);
+$router->post('/usuarios/guardarAPI', [UsuariosController::class, 'guardarAPI']);
+$router->get('/usuarios/buscarAPI', [UsuariosController::class, 'buscarAPI']);
+$router->post('/usuarios/modificarAPI', [UsuariosController::class, 'modificarAPI']);
+$router->get('/usuarios/eliminarAPI', [UsuariosController::class, 'eliminarAPI']);
 
 // Comprueba y valida las rutas
 $router->comprobarRutas();

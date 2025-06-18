@@ -28,7 +28,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/guzman_final_armamento_ingSoft1/usuarios/"><i class="bi bi-house-fill me-2"></i>Usuarios</a>
+                        <a class="nav-link" aria-current="page" href="/guzman_final_armamento_ingSoft1/usuarios"><i class="bi bi-house-fill me-2"></i>Usuarios</a>
                     </li>
   
                     <div class="nav-item dropdown " >

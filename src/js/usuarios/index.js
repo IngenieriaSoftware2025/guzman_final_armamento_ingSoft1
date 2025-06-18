@@ -36,27 +36,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function configurarEventListeners() {
-        // Evento para abrir modal de nuevo usuario
         btnNuevoUsuario.addEventListener('click', abrirModalNuevoUsuario);
 
-        // Eventos para cerrar modal
         cerrarModal.addEventListener('click', cerrarModalUsuario);
         btnCancelar.addEventListener('click', cerrarModalUsuario);
-        
-        // Cerrar modal al hacer clic fuera
+
         window.addEventListener('click', function(e) {
             if (e.target === modal) {
                 cerrarModalUsuario();
             }
         });
 
-        // Evento para enviar formulario
         formularioUsuario.addEventListener('submit', manejarSubmitFormulario);
-
-        // Evento para previsualizar imagen
         usuarioFotografia.addEventListener('change', previsualizarImagen);
-
-        // Eventos para botones de editar y eliminar
         document.addEventListener('click', function(e) {
             if (e.target.closest('.btn-editar')) {
                 const id = e.target.closest('.btn-editar').dataset.id;
@@ -72,12 +64,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function configurarValidaciones() {
-        // Validación de DPI - solo números
         usuarioDpi.addEventListener('input', function() {
             this.value = this.value.replace(/[^0-9]/g, '');
         });
-
-        // Validación de contraseñas coincidentes
         confirmarContra.addEventListener('input', validarConfirmacionPassword);
         usuarioContra.addEventListener('input', validarConfirmacionPassword);
     }
@@ -93,7 +82,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function inicializarDataTable() {
-        // Verificar si DataTable está disponible
         if (typeof DataTable !== 'undefined') {
             new DataTable('#tabla-usuarios', {
                 language: {
@@ -121,22 +109,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function abrirModalEditarUsuario(usuario) {
         modalTitulo.textContent = 'Editar Usuario';
         btnGuardar.textContent = 'Actualizar Usuario';
-        
-        // Llenar formulario con datos del usuario
+
         usuarioId.value = usuario.usuario_id;
         usuarioNombre.value = usuario.usuario_nombre;
         usuarioApellido.value = usuario.usuario_apellido;
         usuarioDpi.value = usuario.usuario_dpi;
         usuarioCorreo.value = usuario.usuario_correo;
-        
-        // Configurar campos de contraseña para edición
         usuarioContra.required = false;
         confirmarContra.required = false;
         usuarioContra.value = '';
         confirmarContra.value = '';
         ayudaPassword.textContent = 'Deje en blanco para mantener la actual';
         
-        // Mostrar foto actual si existe
         if (usuario.usuario_fotografia) {
             fotoActual.src = `/imagenes/usuarios/${usuario.usuario_fotografia}`;
             fotoActualContenedor.style.display = 'block';
