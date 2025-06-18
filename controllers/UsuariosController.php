@@ -425,7 +425,6 @@ class UsuariosController extends ActiveRecord
         }
     }
 
-
     public static function obtenerRolesAPI()
     {
         hasPermissionApi(['OFICIAL']);
