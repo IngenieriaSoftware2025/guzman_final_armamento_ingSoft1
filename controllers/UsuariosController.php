@@ -377,37 +377,44 @@ class UsuariosController extends ActiveRecord
         hasPermissionApi(['OFICIAL']);
         getHeadersApi();
 
-        $id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
-        if (!$id) {
-            http_response_code(400);
-            echo json_encode(['codigo' => 0, 'mensaje' => 'ID de usuario inválido']);
-            return;
-        }
-
         try {
-            // Buscar usuario
-            $usuario = Usuario::find($id);
-            if (!$usuario || $usuario->usuario_situacion == 0) {
+            $id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
+            
+            if (!$id) {
                 http_response_code(400);
-                echo json_encode(['codigo' => 0, 'mensaje' => 'Usuario no encontrado o ya eliminado']);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'ID de usuario inválido'
+                ]);
                 return;
             }
 
-            // Cambiar situación a eliminado (soft delete)
-            $usuario->usuario_situacion = 0;
-            $resultadoUsuario = $usuario->guardar();
+            $consultaUsuario = "SELECT usuario_id, usuario_situacion FROM guzman_usuarios WHERE usuario_id = $id";
+            $datosUsuario = self::fetchFirst($consultaUsuario);
+            
+            if (!$datosUsuario || $datosUsuario['usuario_situacion'] == 0) {
+                http_response_code(400);
+                echo json_encode([
+                    'codigo' => 0,
+                    'mensaje' => 'Usuario no encontrado o ya eliminado'
+                ]);
+                return;
+            }
 
-            // También deshabilitar permisos
+            // Actualizar situación del usuario usando SQL directo
+            $queryEliminar = "UPDATE guzman_usuarios SET usuario_situacion = 0 WHERE usuario_id = $id";
+            $resultadoUsuario = self::SQL($queryEliminar);
+
+            // También deshabilitar permisos del usuario
             $queryPermisos = "UPDATE guzman_permisos_roles SET permiso_situacion = 0 WHERE permiso_usuario = $id";
             self::SQL($queryPermisos);
 
-            if ($resultadoUsuario) {
-                http_response_code(200);
-                echo json_encode(['codigo' => 1, 'mensaje' => 'Usuario eliminado exitosamente']);
-            } else {
-                http_response_code(400);
-                echo json_encode(['codigo' => 0, 'mensaje' => 'Error al eliminar el usuario']);
-            }
+            http_response_code(200);
+            echo json_encode([
+                'codigo' => 1,
+                'mensaje' => 'El usuario ha sido eliminado correctamente'
+            ]);
+
         } catch (Exception $e) {
             http_response_code(400);
             echo json_encode([
@@ -417,6 +424,7 @@ class UsuariosController extends ActiveRecord
             ]);
         }
     }
+
 
     public static function obtenerRolesAPI()
     {
