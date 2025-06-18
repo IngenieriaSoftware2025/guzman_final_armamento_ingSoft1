@@ -51,7 +51,7 @@ class Router
         }
     }
 
-    public function render($view, $datos = [], $layout = 'layouts/layout')
+    public function render($view, $datos = [], $layout = "layouts/layout")
     {
 
         // Leer lo que le pasamos  a la vista

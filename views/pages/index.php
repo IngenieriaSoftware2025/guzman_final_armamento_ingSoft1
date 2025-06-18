@@ -25,7 +25,7 @@
                         <div class="card-body text-center">
                             <h5 class="card-title">Gestión de Usuarios</h5>
                             <p class="card-text">Administrar usuarios del sistema</p>
-                            <a href="/guzman_final_armamento_ingSoft/usuarios" class="btn btn-primary">Acceder</a>
+                            <a href="/guzman_final_armamento_ingSoft1/usuarios" class="btn btn-primary">Acceder</a>
                         </div>
                     </div>
                 </div>
