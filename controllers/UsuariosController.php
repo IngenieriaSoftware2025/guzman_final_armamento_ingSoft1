@@ -12,13 +12,13 @@ class UsuariosController extends ActiveRecord
     public static function renderizarPagina(Router $router)
     {
         // isAuth();
-        // hasPermission(['OFICIAL']);
+        // hasPermission(['ADMINISTRADOR']);
         $router->render('usuarios/index', []);
     }
 
     public static function buscarAPI()
     {
-        // hasPermissionApi(['OFICIAL']);
+        // hasPermissionApi(['ADMINISTRADOR']);
         getHeadersApi();
 
         try {
@@ -46,7 +46,7 @@ class UsuariosController extends ActiveRecord
 
     public static function guardarAPI()
     {
-        // hasPermissionApi(['OFICIAL']);
+        // hasPermissionApi(['ADMINISTRADOR']);
         getHeadersApi();
 
         if (empty($_POST['usuario_correo'])) {
@@ -168,7 +168,7 @@ class UsuariosController extends ActiveRecord
 
     public static function modificarAPI()
     {
-        // hasPermissionApi(['OFICIAL']);
+        // hasPermissionApi(['ADMINISTRADOR']);
         getHeadersApi();
 
         $id = filter_var($_POST['usuario_id'], FILTER_VALIDATE_INT);
@@ -309,7 +309,7 @@ class UsuariosController extends ActiveRecord
 
     public static function eliminarAPI()
     {
-        // hasPermissionApi(['OFICIAL']);
+        // hasPermissionApi(['ADMINISTRADOR']);
         getHeadersApi();
 
         try {
@@ -361,78 +361,4 @@ class UsuariosController extends ActiveRecord
         }
     }
 
-    // public static function obtenerRolesAPI()
-    // {
-    //     hasPermissionApi(['OFICIAL']);
-    //     getHeadersApi();
-
-    //     try {
-    //         $consulta = "SELECT rol_id, rol_nombre, rol_descripcion 
-    //                     FROM guzman_roles 
-    //                     WHERE rol_situacion = 1 
-    //                     ORDER BY rol_nombre";
-    //         $roles = self::fetchArray($consulta);
-
-    //         http_response_code(200);
-    //         echo json_encode([
-    //             'codigo' => 1,
-    //             'mensaje' => 'Roles obtenidos exitosamente',
-    //             'data' => $roles
-    //         ]);
-    //     } catch (Exception $e) {
-    //         http_response_code(500);
-    //         echo json_encode([
-    //             'codigo' => 0,
-    //             'mensaje' => 'Error al obtener roles',
-    //             'detalle' => $e->getMessage()
-    //         ]);
-    //     }
-    // }
-
-    // public static function obtenerUsuarioAPI()
-    // {
-    //     hasPermissionApi(['OFICIAL']);
-    //     getHeadersApi();
-
-    //     $id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
-    //     if (!$id) {
-    //         http_response_code(400);
-    //         echo json_encode(['codigo' => 0, 'mensaje' => 'ID de usuario inválido']);
-    //         return;
-    //     }
-
-    //     try {
-    //         $consulta = "SELECT u.usuario_id, u.usuario_nombre, u.usuario_apellido, u.usuario_dpi, 
-    //                            u.usuario_correo, u.usuario_fecha_creacion, u.usuario_situacion,
-    //                            r.rol_id, r.rol_nombre, r.rol_descripcion
-    //                     FROM guzman_usuarios u
-    //                     LEFT JOIN guzman_permisos_roles pr ON u.usuario_id = pr.permiso_usuario
-    //                     LEFT JOIN guzman_roles r ON pr.permiso_rol = r.rol_id
-    //                     WHERE u.usuario_id = $id AND u.usuario_situacion != 0";
-            
-    //         $usuario = self::fetchFirst($consulta);
-
-    //         if ($usuario) {
-    //             http_response_code(200);
-    //             echo json_encode([
-    //                 'codigo' => 1,
-    //                 'mensaje' => 'Usuario obtenido exitosamente',
-    //                 'data' => $usuario
-    //             ]);
-    //         } else {
-    //             http_response_code(400);
-    //             echo json_encode([
-    //                 'codigo' => 0,
-    //                 'mensaje' => 'Usuario no encontrado'
-    //             ]);
-    //         }
-    //     } catch (Exception $e) {
-    //         http_response_code(500);
-    //         echo json_encode([
-    //             'codigo' => 0,
-    //             'mensaje' => 'Error al obtener el usuario',
-    //             'detalle' => $e->getMessage()
-    //         ]);
-    //     }
-    // }
 }

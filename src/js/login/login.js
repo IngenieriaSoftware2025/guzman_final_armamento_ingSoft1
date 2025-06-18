@@ -39,7 +39,7 @@ const login = async (e) => {
 
     try {
         const body = new FormData(FormLogin);
-        const url = '/guzman_final_armamento_ingSoft1/API/login';
+        const url = '/guzman_final_armamento_ingSof1t1/API/login';
 
         const config = {
             method: 'POST',
@@ -66,7 +66,7 @@ const login = async (e) => {
             });
 
             FormLogin.reset();
-            location.href = '/guzman_final_armamento_ingSoft1/inicio';
+            location.href = '/guzman_final_armamento_ingSof1t1/inicio';
         } else {
             Swal.fire({
                 title: '¡Error!',
