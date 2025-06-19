@@ -7,8 +7,10 @@ module.exports = {
     'js/inicio' : './src/js/inicio.js',
     'js/usuarios/index' : './src/js/usuarios/index.js',
     'js/armamento/index' : './src/js/armamento/index.js',
+    'js/login/index' : './src/js/login/index.js',
     'js/personal/index' : './src/js/personal/index.js',    
     'js/asignaciones/index' : './src/js/asignaciones/index.js',
+    'js/mapas/index' : './src/js/mapas/index.js',
   },
   output: {
     filename: '[name].js',

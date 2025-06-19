@@ -10,6 +10,7 @@ class AppController extends ActiveRecord
     public static function index(Router $router)
     {
         $router->render('pages/index', []);
+        self::renderLogin($router);
     }
 
     public static function renderLogin(Router $router)

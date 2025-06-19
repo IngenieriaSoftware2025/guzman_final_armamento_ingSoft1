@@ -8,6 +8,7 @@ use Controllers\UsuariosController;
 use Controllers\ArmamentoController;
 use Controllers\PersonalController;
 use Controllers\AsignacionController;
+use Controllers\MapasController;
 
 $router = new Router();
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
@@ -55,5 +56,10 @@ $router->get('/login', [AppController::class, 'renderLogin']);
 $router->post('/login', [AppController::class, 'login']);
 $router->get('/logout', [AppController::class, 'logout']);
 $router->get('/dashboard', [AppController::class, 'dashboard']);
+
+
+//url's de mapas
+$router->get('/mapas', [MapasController::class, 'renderizarPagina']);
+
 
 $router->comprobarRutas();

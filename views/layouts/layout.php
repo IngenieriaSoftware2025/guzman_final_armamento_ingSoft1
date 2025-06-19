@@ -38,6 +38,9 @@
                         <a class="nav-link" aria-current="page" href="/guzman_final_armamento_ingSoft1/personal"><i class="bi bi-people-fill me-2"></i></i>Personal</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/guzman_final_armamento_ingSoft1/mapas"><i class="bi bi-people-fill me-2"></i></i>Mapas</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/baseguzman/asignaciones">
                             <i class="bi bi-clipboard-check me-2"></i>Asignaciones
                         </a>
