@@ -7,6 +7,7 @@ use Controllers\AppController;
 use Controllers\UsuariosController;
 use Controllers\ArmamentoController;
 use Controllers\PersonalController;
+use Controllers\AsignacionController;
 
 $router = new Router();
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
@@ -39,7 +40,14 @@ $router->post('/personal/modificarAPI', [PersonalController::class, 'modificarAP
 $router->get('/personal/eliminarAPI', [PersonalController::class, 'eliminarAPI']);
 $router->get('/personal/obtenerPersonalAPI', [PersonalController::class, 'obtenerPersonalAPI']);
 
-// Rutas para graficas
-
+// Rutas para Asignaciones
+$router->get('/asignaciones', [AsignacionController::class, 'renderizarPagina']);
+$router->post('/asignaciones/guardarAPI', [AsignacionController::class, 'guardarAPI']);
+$router->get('/asignaciones/buscarAPI', [AsignacionController::class, 'buscarAPI']);
+$router->post('/asignaciones/devolverAPI', [AsignacionController::class, 'devolverAPI']);
+$router->get('/asignaciones/eliminarAPI', [AsignacionController::class, 'eliminarAPI']);
+$router->get('/asignaciones/obtenerArmamentoDisponibleAPI', [AsignacionController::class, 'obtenerArmamentoDisponibleAPI']);
+$router->get('/asignaciones/obtenerPersonalDisponibleAPI', [AsignacionController::class, 'obtenerPersonalDisponibleAPI']);
+$router->get('/asignaciones/obtenerHistorialPersonalAPI', [AsignacionController::class, 'obtenerHistorialPersonalAPI']);
 
 $router->comprobarRutas();
