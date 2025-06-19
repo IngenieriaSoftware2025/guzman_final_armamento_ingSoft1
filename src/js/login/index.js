@@ -1,79 +1,95 @@
 import Swal from 'sweetalert2';
 import { validarFormulario } from '../funciones';
 
-
 const FormLogin = document.getElementById('FormLogin');
 const BtnIniciar = document.getElementById('BtnIniciar');
+const btnText = document.getElementById('btn-text');
+const btnSpinner = document.getElementById('btn-spinner');
 
 const login = async (e) => {
-
     e.preventDefault();
-
     BtnIniciar.disabled = true;
+    btnText.classList.add('d-none');
+    btnSpinner.classList.remove('d-none');
 
     if (!validarFormulario(FormLogin, [''])) {
-        Swal.fire({
+        await Swal.fire({
             title: "Campos vacíos",
             text: "Debe llenar todos los campos",
-            icon: "info"
+            icon: "warning",
+            confirmButtonColor: '#667eea'
         });
-        BtnIniciar.disabled = false
+        resetButton();
         return;
     }
 
     try {
-        const body = new FormData(FormLogin)
-        const url = '/guzman_final_armamento_ingSoft1/API/login';
-
+        const body = new FormData(FormLogin);
+        const url = '/guzman_final_armamento_ingSoft1/login'; 
+        
         const config = {
             method: 'POST',
             body
-        }
+        };
 
         const respuesta = await fetch(url, config);
         const data = await respuesta.json();
-        const { codigo, mensaje, detalle } = data
+        const { codigo, mensaje, usuario } = data;
 
         if (codigo == 1) {
             await Swal.fire({
-                title: 'Exito',
-                text: mensaje,
+                title: '¡Bienvenido!',
+                text: `${mensaje}. Hola ${usuario.nombre} ${usuario.apellido}`,
                 icon: 'success',
-                showConfirmButton: true,
-                timer: 1500,
-                timerProgressBar: false,
-                background: '#e0f7fa',
-                customClass: {
-                    title: 'custom-title-class',
-                    text: 'custom-text-class'
-                }
-
+                confirmButtonColor: '#667eea',
+                timer: 2000,
+                timerProgressBar: true
             });
 
             FormLogin.reset();
-            location.href = '/guzman_final_armamento_ingSoft1/inicio'
+            setTimeout(() => {
+                window.location.href = '/guzman_final_armamento_ingSoft1/dashboard';
+            }, 1000);
+            
         } else {
-            Swal.fire({
-                title: '¡Error!',
+            await Swal.fire({
+                title: '¡Error de acceso!',
                 text: mensaje,
-                icon: 'warning',
-                showConfirmButton: true,
-                timer: 1500,
-                timerProgressBar: false,
-                background: '#e0f7fa',
-                customClass: {
-                    title: 'custom-title-class',
-                    text: 'custom-text-class'
-                }
-
+                icon: 'error',
+                confirmButtonColor: '#dc3545'
             });
+            resetButton();
         }
 
     } catch (error) {
-        console.log(error)
+        console.error('Error en login:', error);
+        
+        await Swal.fire({
+            title: '¡Error de conexión!',
+            text: 'No se pudo conectar con el servidor. Intente nuevamente.',
+            icon: 'error',
+            confirmButtonColor: '#dc3545'
+        });
+        resetButton();
     }
+};
 
+const resetButton = () => {
     BtnIniciar.disabled = false;
-}
+    btnText.classList.remove('d-none');
+    btnSpinner.classList.add('d-none');
+};
 
-FormLogin.addEventListener('submit', login)
+FormLogin.addEventListener('submit', login);
+
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = FormLogin.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                FormLogin.dispatchEvent(new Event('submit'));
+            }
+        });
+    });
+});

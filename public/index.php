@@ -50,4 +50,10 @@ $router->get('/asignaciones/obtenerArmamentoDisponibleAPI', [AsignacionControlle
 $router->get('/asignaciones/obtenerPersonalDisponibleAPI', [AsignacionController::class, 'obtenerPersonalDisponibleAPI']);
 $router->get('/asignaciones/obtenerHistorialPersonalAPI', [AsignacionController::class, 'obtenerHistorialPersonalAPI']);
 
+// Rutas de autenticación
+$router->get('/login', [AppController::class, 'renderLogin']);
+$router->post('/login', [AppController::class, 'login']);
+$router->get('/logout', [AppController::class, 'logout']);
+$router->get('/dashboard', [AppController::class, 'dashboard']);
+
 $router->comprobarRutas();
