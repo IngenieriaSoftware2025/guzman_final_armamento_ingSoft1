@@ -54,7 +54,7 @@ const guardarPersonal = async e => {
     }
 
     const body = new FormData(formPersonal);
-    const url = "/baseguzman/personal/guardarAPI";
+    const url = "/guzman_final_armamento_ingSoft1/personal/guardarAPI";
     const config = {
         method: 'POST',
         body
@@ -101,7 +101,7 @@ const guardarPersonal = async e => {
 }
 
 const buscarPersonal = async () => {
-    const url = `/baseguzman/personal/buscarAPI`;
+    const url = `/guzman_final_armamento_ingSoft1/personal/buscarAPI`;
     const config = {
         method: 'GET'
     }
@@ -295,7 +295,7 @@ const modificarPersonal = async (event) => {
     }
 
     const body = new FormData(formPersonal);
-    const url = '/baseguzman/personal/modificarAPI';
+    const url = '/guzman_final_armamento_ingSoft1/personal/modificarAPI';
     const config = {
         method: 'POST',
         body
@@ -359,7 +359,7 @@ const eliminarPersonal = async (e) => {
     });
 
     if (AlertaConfirmarEliminar.isConfirmed) {
-        const url = `/baseguzman/personal/eliminarAPI?id=${idPersonal}`;
+        const url = `/guzman_final_armamento_ingSoft1/personal/eliminarAPI?id=${idPersonal}`;
         const config = {
             method: 'GET'
         }

@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 const cargarTiposArmamento = async () => {
-    const url = `/baseguzman/armamento/obtenerTiposAPI`;
+    const url = `/guzman_final_armamento_ingSoft1/armamento/obtenerTiposAPI`;
     const config = {
         method: 'GET'
     }
@@ -49,7 +49,7 @@ const cargarTiposArmamento = async () => {
 }
 
 const cargarCalibres = async () => {
-    const url = `/baseguzman/armamento/obtenerCalibresAPI`;
+    const url = `/guzman_final_armamento_ingSoft1/armamento/obtenerCalibresAPI`;
     const config = {
         method: 'GET'
     }
@@ -74,7 +74,7 @@ const cargarCalibres = async () => {
 }
 
 const cargarAlmacenes = async () => {
-    const url = `/baseguzman/armamento/obtenerAlmacenesAPI`;
+    const url = `/guzman_final_armamento_ingSoft1/armamento/obtenerAlmacenesAPI`;
     const config = {
         method: 'GET'
     }
@@ -115,7 +115,7 @@ const guardarArmamento = async e => {
     }
 
     const body = new FormData(formArmamento);
-    const url = "/baseguzman/armamento/guardarAPI";
+    const url = "/guzman_final_armamento_ingSoft1/armamento/guardarAPI";
     const config = {
         method: 'POST',
         body
@@ -162,7 +162,7 @@ const guardarArmamento = async e => {
 }
 
 const buscarArmamento = async () => {
-    const url = `/baseguzman/armamento/buscarAPI`;
+    const url = `/guzman_final_armamento_ingSoft1/armamento/buscarAPI`;
     const config = {
         method: 'GET'
     }
@@ -383,7 +383,7 @@ const modificarArmamento = async (event) => {
     }
 
     const body = new FormData(formArmamento);
-    const url = '/baseguzman/armamento/modificarAPI';
+    const url = '/guzman_final_armamento_ingSoft1/armamento/modificarAPI';
     const config = {
         method: 'POST',
         body
@@ -445,7 +445,7 @@ const eliminarArmamento = async (e) => {
     });
 
     if (AlertaConfirmarEliminar.isConfirmed) {
-        const url = `/baseguzman/armamento/eliminarAPI?id=${idArmamento}`;
+        const url = `/guzman_final_armamento_ingSoft1/armamento/eliminarAPI?id=${idArmamento}`;
         const config = {
             method: 'GET'
         }

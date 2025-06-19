@@ -54,7 +54,7 @@ const guardarUsuario = async e => {
     }
 
     const body = new FormData(formUsuario);
-    const url = "/baseguzman/usuarios/guardarAPI";
+    const url = "/guzman_final_armamento_ingSoft1/usuarios/guardarAPI";
     const config = {
         method: 'POST',
         body
@@ -94,7 +94,7 @@ const guardarUsuario = async e => {
 }
 
 const BuscarUsuarios = async () => {
-    const url = `/baseguzman/usuarios/buscarAPI`;
+    const url = `/guzman_final_armamento_ingSoft1/usuarios/buscarAPI`;
     const config = {
         method: 'GET'
     }
@@ -267,7 +267,7 @@ const ModificarUsuario = async (event) => {
     }
 
     const body = new FormData(formUsuario);
-    const url = '/baseguzman/usuarios/modificarAPI';
+    const url = '/guzman_final_armamento_ingSoft1/usuarios/modificarAPI';
     const config = {
         method: 'POST',
         body
@@ -321,7 +321,7 @@ const EliminarUsuarios = async (e) => {
     });
 
     if (AlertaConfirmarEliminar.isConfirmed) {
-        const url = `/baseguzman/usuarios/eliminar?id=${idUsuario}`;
+        const url = `/guzman_final_armamento_ingSoft1/usuarios/eliminar?id=${idUsuario}`;
         const config = {
             method: 'GET'
         }

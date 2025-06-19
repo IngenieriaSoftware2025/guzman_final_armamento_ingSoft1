@@ -16,7 +16,7 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="/baseguzman/">
+            <a class="navbar-brand" href="/guzman_final_armamento_ingSoft1/">
                 <img src="<?= asset('./images/cit.png') ?>" width="35px'" alt="cit" >
                 Aplicaciones
             </a>
@@ -24,16 +24,16 @@
                 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="margin: 0;">
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/baseguzman/"><i class="bi bi-house-fill me-2"></i>Inicio</a>
+                        <a class="nav-link" aria-current="page" href="/guzman_final_armamento_ingSoft1/"><i class="bi bi-house-fill me-2"></i>Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/baseguzman/usuarios"><i class="bi bi-person-add"></i>Usuarios</a>
+                        <a class="nav-link" aria-current="page" href="/guzman_final_armamento_ingSoft1/usuarios"><i class="bi bi-person-add"></i>Usuarios</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/baseguzman/armamento"><i class="bi bi-bounding-box-circles"></i></i>Armamento</a>
+                        <a class="nav-link" aria-current="page" href="/guzman_final_armamento_ingSoft1/armamento"><i class="bi bi-bounding-box-circles"></i></i>Armamento</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/baseguzman/personal"><i class="bi bi-people-fill me-2"></i></i>Personal</a>
+                        <a class="nav-link" aria-current="page" href="/guzman_final_armamento_ingSoft1/personal"><i class="bi bi-people-fill me-2"></i></i>Personal</a>
                     </li>
   
                     <div class="nav-item dropdown " >
