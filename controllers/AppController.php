@@ -19,7 +19,7 @@ class AppController extends ActiveRecord
         }
         
         if (isset($_SESSION['usuario'])) {
-            header('Location: /baseguzman/dashboard');
+            header('Location: /guzman_final_armamento_ingSoft1/dashboard');
             exit;
         }
         
@@ -170,7 +170,7 @@ class AppController extends ActiveRecord
         session_unset();
         session_destroy();
 
-        header('Location: /baseguzman/login');
+        header('Location: /guzman_final_armamento_ingSoft1/login');
         exit;
     }
 
