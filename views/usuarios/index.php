@@ -9,18 +9,6 @@
                     </div>
                     <form id="formUsuario" class="p-4 bg-white rounded-3 shadow-sm border" enctype="multipart/form-data">
                         <input type="hidden" id="usuario_id" name="usuario_id">
-
-                        <!-- Preview de Fotografía -->
-                        <div class="row g-4 mb-4">
-                            <div class="col-12 text-center">
-                                <div id="previewFotografia" class="mb-3">
-                                    <div class="bg-light border rounded-circle d-inline-flex align-items-center justify-content-center"
-                                         style="width: 120px; height: 120px;">
-                                        <i class="bi bi-person-fill text-muted" style="font-size: 3rem;"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         
                         <div class="row g-4 mb-3">
                             <div class="col-md-6">

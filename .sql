@@ -76,6 +76,8 @@ CREATE TABLE guzman_personal (
     personal_situacion SMALLINT DEFAULT 1
 );
 
+select * from guzman_personal
+
 CREATE TABLE guzman_almacenes (
     almacen_id SERIAL PRIMARY KEY,
     almacen_nombre VARCHAR(100) NOT NULL,
@@ -152,3 +154,4 @@ INSERT INTO personal (personal_nombres, personal_apellidos, personal_grado, pers
 ('Juan Carlos', 'Pérez García', 'Teniente', 'Comando de Informática', '1234567890102'),
 ('María Elena', 'López Morales', 'Subteniente', 'Comando de Informática', '1234567890103'),
 ('Roberto', 'Martínez Cruz', 'Sargento', 'Comando de Informática', '1234567890104');
+ select * from guzman_usuarios
