@@ -17,3 +17,5 @@ require 'database.php';
 // Conectarnos a la base de datos
 
 ActiveRecord::setDB($db);
+
+require_once __DIR__ . '/middleware.php';

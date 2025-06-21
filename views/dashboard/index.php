@@ -12,25 +12,25 @@
                         
                         <div class="row text-center mt-5">
                             <div class="col-md-3 mb-3">
-                                <a href="/baseguzman/usuarios" class="btn btn-light btn-lg w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4">
+                                <a href="/guzman_final_armamento_ingSoft1/usuarios" class="btn btn-light btn-lg w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4">
                                     <i class="bi bi-people-fill display-4 mb-2"></i>
                                     <span class="fw-bold">Usuarios</span>
                                 </a>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <a href="/baseguzman/personal" class="btn btn-light btn-lg w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4">
+                                <a href="/guzman_final_armamento_ingSoft1/personal" class="btn btn-light btn-lg w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4">
                                     <i class="bi bi-person-badge display-4 mb-2"></i>
                                     <span class="fw-bold">Personal</span>
                                 </a>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <a href="/baseguzman/armamento" class="btn btn-light btn-lg w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4">
+                                <a href="/guzman_final_armamento_ingSoft1/armamento" class="btn btn-light btn-lg w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4">
                                     <i class="bi bi-shield-check display-4 mb-2"></i>
                                     <span class="fw-bold">Armamento</span>
                                 </a>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <a href="/baseguzman/asignaciones" class="btn btn-light btn-lg w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4">
+                                <a href="/guzman_final_armamento_ingSoft1/asignaciones" class="btn btn-light btn-lg w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4">
                                     <i class="bi bi-clipboard-check display-4 mb-2"></i>
                                     <span class="fw-bold">Asignaciones</span>
                                 </a>

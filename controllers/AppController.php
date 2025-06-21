@@ -1,4 +1,5 @@
 <?php
+
 namespace Controllers;
 
 use Exception;
@@ -9,8 +10,7 @@ class AppController extends ActiveRecord
 {
     public static function index(Router $router)
     {
-        $router->render('pages/index', []);
-        self::renderLogin($router);
+        $router->render('pages/index', [], 'layouts/layoutlogin');
     }
 
     public static function renderLogin(Router $router)
@@ -18,13 +18,17 @@ class AppController extends ActiveRecord
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
-        
+
+        header("Cache-Control: no-cache, no-store, must-revalidate");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
         if (isset($_SESSION['usuario'])) {
             header('Location: /guzman_final_armamento_ingSoft1/dashboard');
             exit;
         }
-        
-        $router->render('auth/login', []);
+
+        $router->render('login/index', [], 'layouts/layoutlogin');
     }
 
     public static function login()
@@ -129,7 +133,6 @@ class AppController extends ActiveRecord
                     'mensaje' => 'Credenciales incorrectas'
                 ]);
             }
-
         } catch (Exception $e) {
             echo json_encode([
                 'codigo' => 0,
@@ -150,26 +153,42 @@ class AppController extends ActiveRecord
 
             try {
                 $querySession = "UPDATE guzman_sesiones_usuario 
-                               SET sesion_activa = 0 
-                               WHERE sesion_usuario_id = $usuarioId AND sesion_activa = 1";
+                           SET sesion_activa = 0 
+                           WHERE sesion_usuario_id = $usuarioId AND sesion_activa = 1";
                 self::SQL($querySession);
 
                 try {
                     $queryActividad = "INSERT INTO guzman_historial_actividades 
-                                     (historial_usuario_id, historial_tabla_afectada, historial_descripcion, historial_fecha) 
-                                     VALUES ($usuarioId, 'guzman_usuarios', 'Cierre de sesión', NOW())";
+                                 (historial_usuario_id, historial_tabla_afectada, historial_descripcion, historial_fecha) 
+                                 VALUES ($usuarioId, 'guzman_usuarios', 'Cierre de sesión', NOW())";
                     self::SQL($queryActividad);
                 } catch (Exception $e) {
                     error_log("No se pudo registrar actividad de logout: " . $e->getMessage());
                 }
-
             } catch (Exception $e) {
                 error_log("Error al cerrar sesión: " . $e->getMessage());
             }
         }
 
+        header("Cache-Control: no-cache, no-store, must-revalidate");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
         session_unset();
         session_destroy();
+
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
 
         header('Location: /guzman_final_armamento_ingSoft1/login');
         exit;
@@ -177,8 +196,8 @@ class AppController extends ActiveRecord
 
     public static function dashboard(Router $router)
     {
-        isAuth(); 
-        
+        isAuth();
+
         $router->render('dashboard/index', []);
     }
 

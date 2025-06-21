@@ -8,7 +8,6 @@ class Armamento extends ActiveRecord
     protected static $tabla = 'guzman_armamento';
     protected static $idTabla = 'arma_id';
     protected static $columnasDB = [
-        'arma_id',
         'arma_numero_serie',
         'arma_tipo',
         'arma_calibre', 
@@ -36,7 +35,7 @@ class Armamento extends ActiveRecord
         $this->arma_tipo = $args['arma_tipo'] ?? '';
         $this->arma_calibre = $args['arma_calibre'] ?? '';
         $this->arma_estado = $args['arma_estado'] ?? 'BUEN_ESTADO';
-        $this->arma_fecha_ingreso = $args['arma_fecha_ingreso'] ?? date('Y-m-d');
+        $this->arma_fecha_ingreso = date('m/d/Y');
         $this->arma_almacen = $args['arma_almacen'] ?? '';
         $this->arma_observaciones = $args['arma_observaciones'] ?? '';
         $this->arma_situacion = $args['arma_situacion'] ?? 1;

@@ -155,3 +155,15 @@ INSERT INTO personal (personal_nombres, personal_apellidos, personal_grado, pers
 ('María Elena', 'López Morales', 'Subteniente', 'Comando de Informática', '1234567890103'),
 ('Roberto', 'Martínez Cruz', 'Sargento', 'Comando de Informática', '1234567890104');
  select * from guzman_usuarios
+
+
+CREATE TABLE guzman_permisos_aplicaciones (
+permiso_app_id SERIAL PRIMARY KEY,
+permiso_usuario INTEGER NOT NULL,
+permiso_aplicacion INTEGER NOT NULL,
+permiso_nivel VARCHAR(20) DEFAULT 'LECTURA',
+permiso_fecha_asignacion DATE DEFAULT TODAY,
+permiso_situacion SMALLINT DEFAULT 1,
+FOREIGN KEY (permiso_usuario) REFERENCES guzman_usuarios(usuario_id),
+FOREIGN KEY (permiso_aplicacion) REFERENCES guzman_aplicaciones(app_id)
+);

@@ -183,4 +183,48 @@
                 <div class="text-center">
                     <i class="bi bi-clipboard-x display-1 text-danger mb-3"></i>
                     <h5>¿Está seguro de eliminar esta asignación?</h5>
-                    <p class="text-muted">Esta acción no se puede deshacer
+                    <p class="text-muted">Esta acción no se puede deshacer</p>
+                    <div class="alert alert-warning">
+                        <strong>Asignación:</strong> <span id="infoAsignacionEliminar"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmarEliminarAsignacion">
+                    <i class="bi bi-trash me-2"></i>Eliminar Asignación
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .table th {
+        background-color: #343a40 !important;
+        color: white !important;
+    }
+    
+    .badge {
+        font-size: 0.75rem;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<script src="<?= asset('build/js/asignaciones/index.js') ?>"></script>

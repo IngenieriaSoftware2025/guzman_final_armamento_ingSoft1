@@ -1,10 +1,11 @@
 <?php
+
 namespace Controllers;
 
 use Exception;
 use MVC\Router;
 use Model\ActiveRecord;
-use Model\AsignacionArmamento;
+use Model\AsignacionesArmamento;
 
 class AsignacionController extends ActiveRecord
 {
@@ -16,7 +17,7 @@ class AsignacionController extends ActiveRecord
     public static function buscarAPI()
     {
         getHeadersApi();
-        
+
         try {
             $consulta = "SELECT a.asignacion_id, a.asignacion_fecha_asignacion, 
                                a.asignacion_fecha_devolucion, a.asignacion_motivo, 
@@ -32,7 +33,7 @@ class AsignacionController extends ActiveRecord
                         LEFT JOIN guzman_usuarios u ON a.asignacion_usuario = u.usuario_id
                         WHERE a.asignacion_situacion = 1
                         ORDER BY a.asignacion_fecha_asignacion DESC";
-            
+
             $asignaciones = self::fetchArray($consulta);
 
             http_response_code(200);
@@ -84,7 +85,7 @@ class AsignacionController extends ActiveRecord
             $personal = intval($_POST['asignacion_personal']);
             $motivo = trim(htmlspecialchars($_POST['asignacion_motivo']));
             $usuario = intval($_POST['asignacion_usuario']);
-            $fecha_asignacion = $_POST['asignacion_fecha_asignacion'] ?? date('Y-m-d');
+            $fecha_asignacion = $_POST['asignacion_fecha_asignacion'] ?? date('m/d/Y');
             $situacion = intval($_POST['asignacion_situacion'] ?? 1);
 
             $consultaArmamento = "SELECT COUNT(*) as total FROM guzman_asignaciones_armamento 
@@ -118,7 +119,7 @@ class AsignacionController extends ActiveRecord
                 return;
             }
 
-            $asignacion = new AsignacionArmamento([
+            $asignacion = new AsignacionesArmamento([
                 'asignacion_arma' => $arma,
                 'asignacion_personal' => $personal,
                 'asignacion_fecha_asignacion' => $fecha_asignacion,
@@ -141,7 +142,6 @@ class AsignacionController extends ActiveRecord
                 http_response_code(400);
                 echo json_encode(['codigo' => 0, 'mensaje' => 'Error al registrar la asignación']);
             }
-
         } catch (Exception $e) {
             http_response_code(400);
             echo json_encode([
@@ -166,7 +166,7 @@ class AsignacionController extends ActiveRecord
         try {
             $consultaAsignacion = "SELECT * FROM guzman_asignaciones_armamento WHERE asignacion_id = $id";
             $datosAsignacion = self::fetchFirst($consultaAsignacion);
-            
+
             if (!$datosAsignacion) {
                 http_response_code(400);
                 echo json_encode(['codigo' => 0, 'mensaje' => 'Asignación no encontrada']);
@@ -179,12 +179,11 @@ class AsignacionController extends ActiveRecord
                 return;
             }
 
-            $fecha_devolucion = $_POST['fecha_devolucion'] ?? date('Y-m-d');
-
+            $fecha_devolucion = date('Y-m-d');
             $queryUpdate = "UPDATE guzman_asignaciones_armamento SET 
-                           asignacion_estado = 'DEVUELTO',
-                           asignacion_fecha_devolucion = " . self::$db->quote($fecha_devolucion) . "
-                           WHERE asignacion_id = $id";
+               asignacion_estado = 'DEVUELTO',
+               asignacion_fecha_devolucion = TODAY
+               WHERE asignacion_id = $id";
 
             $resultado = self::SQL($queryUpdate);
 
@@ -195,7 +194,6 @@ class AsignacionController extends ActiveRecord
                 http_response_code(400);
                 echo json_encode(['codigo' => 0, 'mensaje' => 'Error al procesar la devolución']);
             }
-
         } catch (Exception $e) {
             http_response_code(400);
             echo json_encode([
@@ -212,7 +210,7 @@ class AsignacionController extends ActiveRecord
 
         try {
             $id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
-            
+
             if (!$id) {
                 http_response_code(400);
                 echo json_encode(['codigo' => 0, 'mensaje' => 'ID de asignación inválido']);
@@ -221,7 +219,7 @@ class AsignacionController extends ActiveRecord
 
             $consultaAsignacion = "SELECT asignacion_id, asignacion_situacion FROM guzman_asignaciones_armamento WHERE asignacion_id = $id";
             $datosAsignacion = self::fetchFirst($consultaAsignacion);
-            
+
             if (!$datosAsignacion || $datosAsignacion['asignacion_situacion'] == 0) {
                 http_response_code(400);
                 echo json_encode(['codigo' => 0, 'mensaje' => 'Asignación no encontrada o ya eliminada']);
@@ -233,7 +231,6 @@ class AsignacionController extends ActiveRecord
 
             http_response_code(200);
             echo json_encode(['codigo' => 1, 'mensaje' => 'La asignación ha sido eliminada correctamente']);
-
         } catch (Exception $e) {
             http_response_code(400);
             echo json_encode([
@@ -247,7 +244,7 @@ class AsignacionController extends ActiveRecord
     public static function obtenerArmamentoDisponibleAPI()
     {
         getHeadersApi();
-        
+
         try {
             $consulta = "SELECT a.arma_id, a.arma_numero_serie, ta.tipo_nombre, c.calibre_nombre
                         FROM guzman_armamento a
@@ -259,7 +256,7 @@ class AsignacionController extends ActiveRecord
                             WHERE asignacion_estado = 'ASIGNADO' AND asignacion_situacion = 1
                         )
                         ORDER BY a.arma_numero_serie";
-            
+
             $armamento = self::fetchArray($consulta);
 
             http_response_code(200);
@@ -281,14 +278,14 @@ class AsignacionController extends ActiveRecord
     public static function obtenerPersonalDisponibleAPI()
     {
         getHeadersApi();
-        
+
         try {
             $consulta = "SELECT personal_id, personal_nombres, personal_apellidos, 
                                personal_grado, personal_unidad
                         FROM guzman_personal 
                         WHERE personal_situacion = 1 
                         ORDER BY personal_nombres";
-            
+
             $personal = self::fetchArray($consulta);
 
             http_response_code(200);
@@ -310,7 +307,7 @@ class AsignacionController extends ActiveRecord
     public static function obtenerHistorialPersonalAPI()
     {
         getHeadersApi();
-        
+
         $personal_id = filter_var($_GET['personal_id'], FILTER_VALIDATE_INT);
         if (!$personal_id) {
             http_response_code(400);
@@ -329,7 +326,7 @@ class AsignacionController extends ActiveRecord
                         LEFT JOIN guzman_calibres c ON ar.arma_calibre = c.calibre_id
                         WHERE a.asignacion_personal = $personal_id AND a.asignacion_situacion = 1
                         ORDER BY a.asignacion_fecha_asignacion DESC";
-            
+
             $historial = self::fetchArray($consulta);
 
             http_response_code(200);

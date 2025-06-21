@@ -4,7 +4,7 @@ namespace Model;
 
 use Model\ActiveRecord;
 
-class Usuario extends ActiveRecord
+class Usuarios extends ActiveRecord
 {
     protected static $tabla = 'guzman_usuarios';
     protected static $idTabla = 'usuario_id';
@@ -15,7 +15,6 @@ class Usuario extends ActiveRecord
         'usuario_dpi',
         'usuario_correo',
         'usuario_contra',
-        'usuario_fecha_creacion',
         'usuario_fotografia',
         'usuario_situacion'
     ];
@@ -26,7 +25,6 @@ class Usuario extends ActiveRecord
     public $usuario_dpi;
     public $usuario_correo;
     public $usuario_contra;
-    public $usuario_fecha_creacion;
     public $usuario_fotografia;
     public $usuario_situacion;
 
@@ -38,7 +36,6 @@ class Usuario extends ActiveRecord
         $this->usuario_dpi = $args['usuario_dpi'] ?? '';
         $this->usuario_correo = $args['usuario_correo'] ?? '';
         $this->usuario_contra = $args['usuario_contra'] ?? '';
-        $this->usuario_fecha_creacion = $args['usuario_fecha_creacion'] ?? date('Y-m-d');
         $this->usuario_fotografia = $args['usuario_fotografia'] ?? null;
         $this->usuario_situacion = $args['usuario_situacion'] ?? 1;
     }

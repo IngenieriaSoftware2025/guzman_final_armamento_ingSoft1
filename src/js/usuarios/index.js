@@ -1,86 +1,83 @@
-import { Dropdown } from "bootstrap";
 import Swal from "sweetalert2";
-import { validarFormulario } from '../funciones';
 import DataTable from "datatables.net-bs5";
+import { validarFormulario } from "../funciones";
 import { lenguaje } from "../lenguaje";
-import { data } from "jquery";
 
 const formUsuario = document.getElementById('formUsuario');
 const BtnGuardar = document.getElementById('BtnGuardar');
 const BtnModificar = document.getElementById('BtnModificar');
 const BtnLimpiar = document.getElementById('BtnLimpiar');
 const BtnBuscarUsuarios = document.getElementById('BtnBuscarUsuarios');
-const InputUsuarioDpi = document.getElementById('usuario_dpi');
-const seccionTabla = document.getElementById('seccionTabla');
+const validarDpi = document.getElementById('usuario_dpi');
 
-const ValidarDpi = () => {
-    const dpi = InputUsuarioDpi.value.trim();
+const validacionDpi = () => {
+    const cantidadDigitos = validarDpi.value;
 
-    if (dpi.length < 1) {
-        InputUsuarioDpi.classList.remove('is-valid', 'is-invalid');
+    if (cantidadDigitos.length < 1) {
+        validarDpi.classList.remove('is-valid', 'is-invalid');
     } else {
-        if (dpi.length < 13) {
+        if (cantidadDigitos.length !== 13) {
             Swal.fire({
                 position: "center",
-                icon: "error",
-                title: "DPI INVALIDO",
-                text: "El DPI debe tener al menos 13 caracteres",
-                showConfirmButton: true,
+                icon: "warning",
+                title: "Revise el número de DPI",
+                text: "La cantidad de dígitos debe ser igual a 13",
+                showConfirmButton: false,
+                timer: 3000
             });
 
-            InputUsuarioDpi.classList.remove('is-valid');
-            InputUsuarioDpi.classList.add('is-invalid');
+            validarDpi.classList.remove('is-valid');
+            validarDpi.classList.add('is-invalid');
         } else {
-            InputUsuarioDpi.classList.remove('is-invalid');
-            InputUsuarioDpi.classList.add('is-valid');
+            validarDpi.classList.remove('is-invalid');
+            validarDpi.classList.add('is-valid');
         }
     }
-}
+};
 
 const guardarUsuario = async e => {
     e.preventDefault();
     BtnGuardar.disabled = true;
 
-    if (!validarFormulario(formUsuario, ['usuario_id', 'usuario_contraseña', 'usuario_fecha_creacion',  'usuario_fotografia', 'usuario_situacion',])) {
+    if (!validarFormulario(formUsuario, ['usuario_id', 'usuario_situacion'])) {
         Swal.fire({
             position: "center",
-            icon: "info",
+            icon: "warning",
             title: "FORMULARIO INCOMPLETO",
-            text: "Debe de validar todos los campos",
+            text: "Debe validar todos los campos",
             showConfirmButton: true,
         });
         BtnGuardar.disabled = false;
         return;
     }
 
-    const body = new FormData(formUsuario);
-    const url = "/guzman_final_armamento_ingSoft1/usuarios/guardarAPI";
-    const config = {
-        method: 'POST',
-        body
-    }
-
     try {
-        const respuesta = await fetch(url, config);
-        const datos = await respuesta.json();
-        console.log(datos);
-        const { codigo, mensaje } = datos;
+        const body = new FormData(formUsuario);
+        const url = "/guzman_final_armamento_ingSoft1/usuarios/guardarAPI";
+        const config = {
+            method: 'POST',
+            body
+        };
 
-        if (codigo == 1) {
+        const respuesta = await fetch(url, config);
+        const data = await respuesta.json();
+        const { codigo, mensaje } = data;
+
+        if (codigo === 1) {
             await Swal.fire({
                 position: "center",
                 icon: "success",
-                title: "Exito",
+                title: "Éxito",
                 text: mensaje,
                 showConfirmButton: true,
             });
-
-            limpiarTodo();
+            
+            formUsuario.reset();
             BuscarUsuarios();
         } else {
             await Swal.fire({
                 position: "center",
-                icon: "info",
+                icon: "error",
                 title: "Error",
                 text: mensaje,
                 showConfirmButton: true,
@@ -89,61 +86,26 @@ const guardarUsuario = async e => {
 
     } catch (error) {
         console.log(error);
+        await Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "Error",
+            text: "Error de conexión",
+            showConfirmButton: true,
+        });
     }
     BtnGuardar.disabled = false;
-}
-
-const BuscarUsuarios = async () => {
-    const url = `/guzman_final_armamento_ingSoft1/usuarios/buscarAPI`;
-    const config = {
-        method: 'GET'
-    }
-
-    try {
-        const respuesta = await fetch(url, config);
-        const datos = await respuesta.json();
-        const { codigo, mensaje, data } = datos;
-
-        if (codigo == 1) {
-            console.log('Usuarios encontrados:', data);
-
-            if (datatable) {
-                datatable.clear().draw();
-                datatable.rows.add(data).draw();
-            }
-        } else {
-            await Swal.fire({
-                position: "center",
-                icon: "info",
-                title: "Error",
-                text: mensaje,
-                showConfirmButton: true,
-            });
-        }
-
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-const MostrarTabla = () => {
-    if (seccionTabla.style.display === 'none') {
-        seccionTabla.style.display = 'block';
-        BuscarUsuarios();
-    } else {
-        seccionTabla.style.display = 'none';
-    }
-}
+};
 
 const datatable = new DataTable('#TableUsuarios', {
     dom: `
-        <"row mt-3 justify-content-between" 
-            <"col" l> 
-            <"col" B> 
+        <"row mt-3 justify-content-between"
+            <"col" l>
+            <"col" B>
             <"col-3" f>
         >
         t
-        <"row mt-3 justify-content-between" 
+        <"row mt-3 justify-content-between"
             <"col-md-3 d-flex align-items-center" i> 
             <"col-md-8 d-flex justify-content-end" p>
         >
@@ -157,75 +119,112 @@ const datatable = new DataTable('#TableUsuarios', {
             width: '5%',
             render: (data, type, row, meta) => meta.row + 1
         },
-        { 
-            title: 'Nombre', 
-            data: 'usuario_nombre',
-            width: '10%'
-        },
-        { 
-            title: 'Apellido', 
-            data: 'usuario_apellido',
-            width: '10%'
-        },{ 
-            title: 'DPI', 
-            data: 'usuario_dpi',
-            width: '10%'
-        },
-        { 
-            title: 'Correo', 
-            data: 'usuario_correo',
-            width: '15%'
-        },
         {
             title: 'Fotografía',
             data: 'usuario_fotografia',
             width: '8%',
             searchable: false,
             orderable: false,
-            render: (data, type, row) => {
-                if (data && data.trim() !== '') {
-                    return `<img src="${data}" alt="Foto" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">`;
+            render: (data, type, row, meta) => {
+                if (data && data !== null && data !== '') {
+                    return `<img src="/guzman_final_armamento_ingSoft1/public/${data}" alt="Foto usuario" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjNjY2NjY2Ii8+CjxwYXRoIGQ9Ik0yNSAyM0MyNy43NjE0IDIzIDMwIDIwLjc2MTQgMzAgMThDMzAgMTUuMjM4NiAyNy43NjE0IDEzIDI1IDEzQzIyLjIzODYgMTMgMjAgMTUuMjM4NiAyMCAxOEMyMCAyMC43NjE0IDIyLjIzODYgMjMgMjUgMjNaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMjUgMjVDMjAuMDI5NCAyNSAxNiAyOS4wMjk0IDE2IDM0VjM3SDM0VjM0QzM0IDI5LjAyOTQgMjkuOTcwNiAyNSAyNSAyNVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=';">`;
                 } else {
-                    return '<span class="text-muted">Sin foto</span>';
+                    return `<div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="bi bi-person text-white"></i>
+                            </div>`;
                 }
             }
         },
+        { title: 'Nombre', data: 'usuario_nombre', width: '15%' },
+        { title: 'Apellido', data: 'usuario_apellido', width: '15%' },
+        { title: 'DPI', data: 'usuario_dpi', width: '12%' },
+        { title: 'Correo', data: 'usuario_correo', width: '20%' },
         {
             title: 'Situación',
             data: 'usuario_situacion',
-            width: '7%',
+            width: '8%',
             render: (data, type, row) => {
-                return data == 1 ? "ACTIVO" : "INACTIVO";
+                return data == 1 ? 
+                    '<span class="badge bg-success">Activo</span>' : 
+                    '<span class="badge bg-danger">Inactivo</span>';
             }
         },
         {
             title: 'Acciones',
             data: 'usuario_id',
-            width: '5%',
+            width: '15%',
             searchable: false,
             orderable: false,
             render: (data, type, row, meta) => {
                 return `
-                 <div class='d-flex justify-content-center'>
-                     <button class='btn btn-warning modificar mx-1' 
-                        data-id="${data}" 
-                        data-nombre="${row.usuario_nombre || ''}"  
-                        data-apellido="${row.usuario_apellido || ''}"  
-                        data-dpi="${row.usuario_dpi || ''}" 
-                        data-correo="${row.usuario_correo || ''}"                         
-                         title="Modificar">
+                <div class='d-flex justify-content-center'>
+                     <button class='btn btn-warning btn-sm modificar mx-1' 
+                         data-id="${data}" 
+                         data-nombre="${row.usuario_nombre}"  
+                         data-apellido="${row.usuario_apellido}"  
+                         data-dpi="${row.usuario_dpi}"  
+                         data-correo="${row.usuario_correo}"
+                         data-situacion="${row.usuario_situacion}">
                          <i class='bi bi-pencil-square me-1'></i> Modificar
                      </button>
-                     <button class='btn btn-danger eliminar mx-1' 
-                         data-id="${data}"
-                         title="Eliminar">
+                     <button class='btn btn-danger btn-sm eliminar mx-1' 
+                         data-id="${data}">
                         <i class="bi bi-trash3 me-1"></i>Eliminar
                      </button>
                  </div>`;
             }
         }
-    ]
+    ],
 });
+
+const BuscarUsuarios = async () => {
+    const url = '/guzman_final_armamento_ingSoft1/usuarios/buscarAPI';
+    const config = {
+        method: 'GET'
+    };
+
+    try {
+        const respuesta = await fetch(url, config);
+        const datos = await respuesta.json();
+        const { codigo, mensaje, data } = datos;
+
+        if (codigo === 1) {
+            const seccionTabla = document.getElementById('seccionTabla');
+            seccionTabla.style.display = 'block';
+            
+            await Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Éxito",
+                text: mensaje,
+                showConfirmButton: false,
+                timer: 2000,
+            });
+
+            datatable.clear().draw();
+            datatable.rows.add(data).draw();
+            
+        } else {
+            await Swal.fire({
+                position: "center",
+                icon: "info",
+                title: "Información",
+                text: mensaje,
+                showConfirmButton: false,
+                timer: 2000,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        await Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "Error",
+            text: "Error de conexión",
+            showConfirmButton: true,
+        });
+    }
+};
 
 const llenarFormulario = (event) => {
     const datos = event.currentTarget.dataset;
@@ -234,55 +233,57 @@ const llenarFormulario = (event) => {
     document.getElementById('usuario_nombre').value = datos.nombre;
     document.getElementById('usuario_apellido').value = datos.apellido;
     document.getElementById('usuario_dpi').value = datos.dpi;
-    document.getElementById('usuario_correo').value = datos.correo;    
+    document.getElementById('usuario_correo').value = datos.correo;
+    document.getElementById('usuario_situacion').value = datos.situacion;
 
     BtnGuardar.classList.add('d-none');
     BtnModificar.classList.remove('d-none');
 
     window.scrollTo({
         top: 0,
+        behavior: 'smooth'
     });
-}
+};
 
 const limpiarTodo = () => {
     formUsuario.reset();
     BtnGuardar.classList.remove('d-none');
     BtnModificar.classList.add('d-none');
-}
+};
 
 const ModificarUsuario = async (event) => {
     event.preventDefault();
     BtnModificar.disabled = true;
 
-    if (!validarFormulario(formUsuario, ['usuario_id', 'usuario_contraseña', 'usuario_fecha_creacion',  'usuario_situacion', 'usuario_fotografia', 'confirmar_contra'])) {
-        Swal.fire({
+    if (!validarFormulario(formUsuario, ['usuario_contra', 'usuario_fotografia'])) {
+        await Swal.fire({
             position: "center",
-            icon: "info",
+            icon: "warning",
             title: "FORMULARIO INCOMPLETO",
-            text: "Debe de validar todos los campos",
+            text: "Debe validar todos los campos obligatorios",
             showConfirmButton: true,
         });
         BtnModificar.disabled = false;
         return;
     }
 
-    const body = new FormData(formUsuario);
-    const url = '/guzman_final_armamento_ingSoft1/usuarios/modificarAPI';
-    const config = {
-        method: 'POST',
-        body
-    }
-
     try {
+        const body = new FormData(formUsuario);
+        const url = '/guzman_final_armamento_ingSoft1/usuarios/modificarAPI';
+        const config = {
+            method: 'POST',
+            body
+        };
+
         const respuesta = await fetch(url, config);
         const datos = await respuesta.json();
         const { codigo, mensaje } = datos;
 
-        if (codigo == 1) {
+        if (codigo === 1) {
             await Swal.fire({
                 position: "center",
                 icon: "success",
-                title: "Exito",
+                title: "Éxito",
                 text: mensaje,
                 showConfirmButton: true,
             });
@@ -292,7 +293,7 @@ const ModificarUsuario = async (event) => {
         } else {
             await Swal.fire({
                 position: "center",
-                icon: "info",
+                icon: "error",
                 title: "Error",
                 text: mensaje,
                 showConfirmButton: true,
@@ -301,69 +302,80 @@ const ModificarUsuario = async (event) => {
 
     } catch (error) {
         console.log(error);
+        await Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "Error",
+            text: "Error de conexión",
+            showConfirmButton: true,
+        });
     }
     BtnModificar.disabled = false;
-}
+};
 
-const EliminarUsuarios = async (e) => {
+const EliminarUsuario = async (e) => {
     const idUsuario = e.currentTarget.dataset.id;
 
     const AlertaConfirmarEliminar = await Swal.fire({
         position: "center",
-        icon: "info",
+        icon: "question",
         title: "¿Desea ejecutar esta acción?",
-        text: 'Esta completamente seguro que desea eliminar este registro',
+        text: "El usuario será eliminado del sistema",
         showConfirmButton: true,
-        confirmButtonText: 'Si, Eliminar',
-        confirmButtonColor: 'red',
-        cancelButtonText: 'No, Cancelar',
+        confirmButtonText: "Sí, Eliminar",
+        confirmButtonColor: "#d33",
+        cancelButtonText: "Cancelar",
         showCancelButton: true
     });
 
-    if (AlertaConfirmarEliminar.isConfirmed) {
-        const url = `/guzman_final_armamento_ingSoft1/usuarios/eliminar?id=${idUsuario}`;
-        const config = {
+    if (!AlertaConfirmarEliminar.isConfirmed) return;
+
+    try {
+        const respuesta = await fetch(`/guzman_final_armamento_ingSoft1/usuarios/eliminarAPI?id=${idUsuario}`, {
             method: 'GET'
+        });
+
+        const datos = await respuesta.json();
+        const { codigo, mensaje } = datos;
+
+        if (codigo === 1) {
+            await Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Éxito",
+                text: mensaje,
+                showConfirmButton: true,
+            });
+            BuscarUsuarios();
+        } else {
+            await Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Error",
+                text: mensaje,
+                showConfirmButton: true,
+            });
         }
 
-        try {
-            const consulta = await fetch(url, config);
-            const respuesta = await consulta.json();
-            const { codigo, mensaje } = respuesta;
-
-            if (codigo == 1) {
-                await Swal.fire({
-                    position: "center",
-                    icon: "success",
-                    title: "Exito",
-                    text: mensaje,
-                    showConfirmButton: true,
-                });
-                
-                BuscarUsuarios();
-            } else {
-                await Swal.fire({
-                    position: "center",
-                    icon: "error",
-                    title: "Error",
-                    text: mensaje,
-                    showConfirmButton: true,
-                });
-            }
-
-        } catch (error) {
-            console.log(error);
-        }
+    } catch (error) {
+        console.log(error);
+        await Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "Error",
+            text: "Error de conexión",
+            showConfirmButton: true,
+        });
     }
-}
+};
 
-datatable.on('click', '.eliminar', EliminarUsuarios);
-datatable.on('click', '.modificar', llenarFormulario);
+// Event Listeners
+validarDpi.addEventListener('change', validacionDpi);
 formUsuario.addEventListener('submit', guardarUsuario);
-
-document.getElementById('usuario_dpi')
-InputUsuarioDpi.addEventListener('change', ValidarDpi);
-
 BtnLimpiar.addEventListener('click', limpiarTodo);
 BtnModificar.addEventListener('click', ModificarUsuario);
-BtnBuscarUsuarios.addEventListener('click', MostrarTabla);
+BtnBuscarUsuarios.addEventListener('click', BuscarUsuarios);
+
+// DataTable Events
+datatable.on('click', '.eliminar', EliminarUsuario);
+datatable.on('click', '.modificar', llenarFormulario);

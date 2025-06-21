@@ -106,7 +106,6 @@
                                     <th>Correo</th>
                                     <th>Fecha Registro</th>
                                     <th>Situación</th>
-                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>

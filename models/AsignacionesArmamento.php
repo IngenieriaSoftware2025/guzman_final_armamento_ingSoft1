@@ -3,7 +3,7 @@ namespace Model;
 
 use Model\ActiveRecord;
 
-class AsignacionArmamento extends ActiveRecord
+class AsignacionesArmamento extends ActiveRecord
 {
     protected static $tabla = 'guzman_asignaciones_armamento';
     protected static $idTabla = 'asignacion_id';
@@ -34,7 +34,7 @@ class AsignacionArmamento extends ActiveRecord
         $this->asignacion_id = $args['asignacion_id'] ?? null;
         $this->asignacion_arma = $args['asignacion_arma'] ?? '';
         $this->asignacion_personal = $args['asignacion_personal'] ?? '';
-        $this->asignacion_fecha_asignacion = $args['asignacion_fecha_asignacion'] ?? date('Y-m-d');
+        $this->asignacion_fecha_asignacion = null;
         $this->asignacion_fecha_devolucion = $args['asignacion_fecha_devolucion'] ?? null;
         $this->asignacion_motivo = $args['asignacion_motivo'] ?? '';
         $this->asignacion_estado = $args['asignacion_estado'] ?? 'ASIGNADO';

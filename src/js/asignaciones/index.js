@@ -31,7 +31,7 @@ const establecerFechaActual = () => {
 }
 
 const cargarArmamentoDisponible = async () => {
-    const url = `/baseguzman/asignaciones/obtenerArmamentoDisponibleAPI`;
+    const url = `/guzman_final_armamento_ingSoft1/asignaciones/obtenerArmamentoDisponibleAPI`;
     const config = {
         method: 'GET'
     }
@@ -56,7 +56,7 @@ const cargarArmamentoDisponible = async () => {
 }
 
 const cargarPersonalDisponible = async () => {
-    const url = `/baseguzman/asignaciones/obtenerPersonalDisponibleAPI`;
+    const url = `/guzman_final_armamento_ingSoft1/asignaciones/obtenerPersonalDisponibleAPI`;
     const config = {
         method: 'GET'
     }
@@ -104,7 +104,7 @@ const guardarAsignacion = async e => {
     }
 
     const body = new FormData(formAsignacion);
-    const url = "/baseguzman/asignaciones/guardarAPI";
+    const url = "/guzman_final_armamento_ingSoft1/asignaciones/guardarAPI";
     const config = {
         method: 'POST',
         body
@@ -152,7 +152,7 @@ const guardarAsignacion = async e => {
 }
 
 const buscarAsignaciones = async () => {
-    const url = `/baseguzman/asignaciones/buscarAPI`;
+    const url = `/guzman_final_armamento_ingSoft1/asignaciones/buscarAPI`;
     const config = {
         method: 'GET'
     }
@@ -360,7 +360,7 @@ const procesarDevolucion = async () => {
     body.append('asignacion_id', asignacionId);
     body.append('fecha_devolucion', fechaDevolucion);
 
-    const url = "/baseguzman/asignaciones/devolverAPI";
+    const url = "/guzman_final_armamento_ingSoft1/asignaciones/devolverAPI";
     const config = {
         method: 'POST',
         body
@@ -421,7 +421,7 @@ const cargarHistorialPersonal = async () => {
         return;
     }
 
-    const url = `/baseguzman/asignaciones/obtenerHistorialPersonalAPI?personal_id=${personalId}`;
+    const url = `/guzman_final_armamento_ingSoft1/asignaciones/obtenerHistorialPersonalAPI?personal_id=${personalId}`;
     const config = {
         method: 'GET'
     }
@@ -505,7 +505,7 @@ const eliminarAsignacion = async (e) => {
     });
 
     if (AlertaConfirmarEliminar.isConfirmed) {
-        const url = `/baseguzman/asignaciones/eliminarAPI?id=${idAsignacion}`;
+        const url = `/guzman_final_armamento_ingSoft1/asignaciones/eliminarAPI?id=${idAsignacion}`;
         const config = {
             method: 'GET'
         }

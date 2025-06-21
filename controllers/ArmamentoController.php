@@ -1,4 +1,5 @@
 <?php
+
 namespace Controllers;
 
 use Exception;
@@ -13,13 +14,17 @@ class ArmamentoController extends ActiveRecord
 {
     public static function renderizarPagina(Router $router)
     {
+        require_once __DIR__ . '/../includes/middleware.php';
+        verificarPermisoAplicacion('ARMAMENTO', 'LECTURA');
         $router->render('armamento/index', []);
     }
 
     public static function buscarAPI()
     {
         getHeadersApi();
-        
+        require_once __DIR__ . '/../includes/middleware.php';
+        verificarPermisoAplicacion('ARMAMENTO', 'LECTURA');
+
         try {
             $consulta = "SELECT a.arma_id, a.arma_numero_serie, a.arma_estado, 
                                a.arma_fecha_ingreso, a.arma_observaciones, a.arma_situacion,
@@ -30,7 +35,7 @@ class ArmamentoController extends ActiveRecord
                         LEFT JOIN guzman_almacenes al ON a.arma_almacen = al.almacen_id
                         WHERE a.arma_situacion = 1
                         ORDER BY a.arma_numero_serie";
-            
+
             $armamento = self::fetchArray($consulta);
 
             http_response_code(200);
@@ -51,6 +56,8 @@ class ArmamentoController extends ActiveRecord
 
     public static function guardarAPI()
     {
+        require_once __DIR__ . '/../includes/middleware.php';
+        verificarPermisoAplicacion('ARMAMENTO', 'ESCRITURA');
         getHeadersApi();
 
         // Validar campos obligatorios
@@ -88,25 +95,25 @@ class ArmamentoController extends ActiveRecord
             $situacion = intval($_POST['arma_situacion'] ?? 1);
 
             // Verificar que no exista el número de serie
-            $consultaSerie = "SELECT COUNT(*) as total FROM guzman_armamento WHERE arma_numero_serie = " . self::$db->quote($numero_serie);
+            $consultaSerie = "SELECT COUNT(*) as total FROM guzman_armamento WHERE arma_numero_serie = '" . $numero_serie . "'";
             $resultadoSerie = self::fetchFirst($consultaSerie);
 
-            if ($resultadoSerie['total'] > 0) {
+            if ($resultadoSerie && $resultadoSerie['total'] > 0) {
                 http_response_code(400);
                 echo json_encode(['codigo' => 0, 'mensaje' => 'Ya existe un armamento con este número de serie']);
                 return;
             }
 
-            $armamento = new Armamento([
-                'arma_numero_serie' => $numero_serie,
-                'arma_tipo' => $tipo,
-                'arma_calibre' => $calibre,
-                'arma_estado' => $estado,
-                'arma_almacen' => $almacen,
-                'arma_observaciones' => $observaciones,
-                'arma_situacion' => $situacion
-            ]);
+            // Crear instancia usando constructor
+            $_POST['arma_numero_serie'] = $numero_serie;
+            $_POST['arma_tipo'] = $tipo;
+            $_POST['arma_calibre'] = $calibre;
+            $_POST['arma_estado'] = $estado;
+            $_POST['arma_almacen'] = $almacen;
+            $_POST['arma_observaciones'] = $observaciones;
+            $_POST['arma_situacion'] = $situacion;
 
+            $armamento = new Armamento($_POST);
             $resultado = $armamento->crear();
 
             if ($resultado['resultado']) {
@@ -120,9 +127,8 @@ class ArmamentoController extends ActiveRecord
                 http_response_code(400);
                 echo json_encode(['codigo' => 0, 'mensaje' => 'Error al registrar el armamento']);
             }
-
         } catch (Exception $e) {
-            http_response_code(400);
+            http_response_code(500);
             echo json_encode([
                 'codigo' => 0,
                 'mensaje' => 'Error al guardar el armamento',
@@ -133,6 +139,8 @@ class ArmamentoController extends ActiveRecord
 
     public static function modificarAPI()
     {
+        require_once __DIR__ . '/../includes/middleware.php';
+        verificarPermisoAplicacion('ARMAMENTO', 'ESCRITURA');
         getHeadersApi();
 
         $id = filter_var($_POST['arma_id'], FILTER_VALIDATE_INT);
@@ -153,7 +161,7 @@ class ArmamentoController extends ActiveRecord
             // Verificar que existe el armamento
             $consultaArmamento = "SELECT * FROM guzman_armamento WHERE arma_id = $id";
             $datosArmamento = self::fetchFirst($consultaArmamento);
-            
+
             if (!$datosArmamento) {
                 http_response_code(400);
                 echo json_encode(['codigo' => 0, 'mensaje' => 'Armamento no encontrado']);
@@ -198,7 +206,6 @@ class ArmamentoController extends ActiveRecord
                 http_response_code(400);
                 echo json_encode(['codigo' => 0, 'mensaje' => 'Error al actualizar el armamento']);
             }
-
         } catch (Exception $e) {
             http_response_code(400);
             echo json_encode([
@@ -211,11 +218,13 @@ class ArmamentoController extends ActiveRecord
 
     public static function eliminarAPI()
     {
+        require_once __DIR__ . '/../includes/middleware.php';
+        verificarPermisoAplicacion('ARMAMENTO', 'TOTAL');
         getHeadersApi();
 
         try {
             $id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
-            
+
             if (!$id) {
                 http_response_code(400);
                 echo json_encode(['codigo' => 0, 'mensaje' => 'ID de armamento inválido']);
@@ -225,7 +234,7 @@ class ArmamentoController extends ActiveRecord
             // Verificar si el armamento existe
             $consultaArmamento = "SELECT arma_id, arma_situacion FROM guzman_armamento WHERE arma_id = $id";
             $datosArmamento = self::fetchFirst($consultaArmamento);
-            
+
             if (!$datosArmamento || $datosArmamento['arma_situacion'] == 0) {
                 http_response_code(400);
                 echo json_encode(['codigo' => 0, 'mensaje' => 'Armamento no encontrado o ya eliminado']);
@@ -238,7 +247,6 @@ class ArmamentoController extends ActiveRecord
 
             http_response_code(200);
             echo json_encode(['codigo' => 1, 'mensaje' => 'El armamento ha sido eliminado correctamente']);
-
         } catch (Exception $e) {
             http_response_code(400);
             echo json_encode([
@@ -251,8 +259,10 @@ class ArmamentoController extends ActiveRecord
 
     public static function obtenerTiposAPI()
     {
+        require_once __DIR__ . '/../includes/middleware.php';
+        verificarPermisoAplicacion('ARMAMENTO', 'LECTURA');
         getHeadersApi();
-        
+
         try {
             $consulta = "SELECT tipo_id, tipo_nombre FROM guzman_tipos_armamento WHERE tipo_situacion = 1 ORDER BY tipo_nombre";
             $tipos = self::fetchArray($consulta);
@@ -275,8 +285,10 @@ class ArmamentoController extends ActiveRecord
 
     public static function obtenerCalibresAPI()
     {
+        require_once __DIR__ . '/../includes/middleware.php';
+        verificarPermisoAplicacion('ARMAMENTO', 'LECTURA');
         getHeadersApi();
-        
+
         try {
             $consulta = "SELECT calibre_id, calibre_nombre FROM guzman_calibres WHERE calibre_situacion = 1 ORDER BY calibre_nombre";
             $calibres = self::fetchArray($consulta);
@@ -299,8 +311,10 @@ class ArmamentoController extends ActiveRecord
 
     public static function obtenerAlmacenesAPI()
     {
+        require_once __DIR__ . '/../includes/middleware.php';
+        verificarPermisoAplicacion('ARMAMENTO', 'LECTURA');
         getHeadersApi();
-        
+
         try {
             $consulta = "SELECT almacen_id, almacen_nombre FROM guzman_almacenes WHERE almacen_situacion = 1 ORDER BY almacen_nombre";
             $almacenes = self::fetchArray($consulta);
